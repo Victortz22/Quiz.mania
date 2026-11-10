@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mania</title>
+
+    <!-- CSS original reunido neste arquivo -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #17152e, #292653);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: #211f42;
+            width: 100%;
+            max-width: 520px;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tela inicial — mantendo os textos e o estilo roxo do original */
+        #start-screen {
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        #start-screen h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        #start-screen .subtitle {
+            font-size: 17px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .quiz-icon {
+            font-size: 75px;
+            margin: 25px 0;
+        }
+
+        #start-btn {
+            background: #6c63ff;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: auto;
+        }
+
+        #start-btn:hover {
+            background: #5148d9;
+            transform: scale(1.05);
+        }
+
+        .start-info {
+            margin-top: 25px;
+            opacity: 0.7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Tela das perguntas */
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #454263;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        #progress {
+            width: 0%;
+            height: 100%;
+            background: #6c63ff;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        #question {
+            font-size: 21px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        #answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .answer-btn {
+            background: #343153;
+            color: white;
+            border: 2px solid #514d78;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: left;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            background: #45416d;
+            border-color: #8b84ff;
+        }
+
+        .answer-btn:disabled {
+            cursor: default;
+            opacity: 1;
+        }
+
+        .answer-btn.correct {
+            background: #176b46;
+            border-color: #27ae70;
+        }
+
+        .answer-btn.wrong {
+            background: #8a303b;
+            border-color: #e05260;
+        }
+
+        #next-btn,
+        #restart-btn {
+            background: #6c63ff;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+
+        #next-btn:hover:not(:disabled),
+        #restart-btn:hover {
+            background: #5148d9;
+        }
+
+        #next-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        #result {
+            text-align: center;
+            padding: 25px 10px;
+        }
+
+        #result h2 {
+            margin-bottom: 20px;
+        }
+
+        #final-score {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        #message {
+            line-height: 1.5;
+        }
+
+        @media (max-width: 420px) {
+            .quiz-container {
+                padding: 20px;
+            }
+
+            #start-screen h1 {
+                font-size: 34px;
+            }
+
+            #question {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="quiz-container">
+
+        <!-- TELA INICIAL ORIGINAL -->
+        <div id="start-screen">
+            <h1>Quiz Mania</h1>
+
+            <p class="subtitle">
+                Teste seus conhecimentos e descubra
+                quantas perguntas você consegue acertar!
+            </p>
+
+            <div class="quiz-icon">🧠</div>
+
+            <button id="start-btn">Começar Quiz</button>
+
+            <p class="start-info">Prepare-se para o desafio!</p>
+        </div>
+
+        <!-- TELA DAS PERGUNTAS -->
+        <div id="quiz" class="hidden">
+
+            <div class="quiz-info">
+                <span id="question-number">Pergunta 1 de 5</span>
+                <span id="score">Pontos: 0</span>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+
+            <h2 id="question">Carregando pergunta...</h2>
+
+            <div id="answers"></div>
+
+            <button id="next-btn" disabled>
+                Próxima pergunta
+            </button>
+        </div>
+
+        <!-- TELA DE RESULTADO -->
+        <div id="result" class="hidden">
+            <h2>Quiz finalizado!</h2>
+            <p id="final-score"></p>
+            <p id="message"></p>
+            <button id="restart-btn">Jogar novamente</button>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT reunido neste arquivo -->
+    <script>
+        // Perguntas do Quiz Mania
+        const perguntas = [
+            {
+                pergunta: "O que é HTML?",
+                respostas: [
+                    "Uma linguagem de marcação",
+                    "Um sistema operacional",
+                    "Um banco de dados"
+                ],
+                correta: 0
+            },
+            {
+                pergunta: "Qual linguagem é usada para estilizar páginas?",
+                respostas: ["Python", "CSS", "Java"],
+                correta: 1
+            },
+            {
+                pergunta: "Qual linguagem adiciona interatividade ao site?",
+                respostas: ["JavaScript", "HTML", "SQL"],
+                correta: 0
+            },
+            {
+                pergunta: "O que significa CSS?",
+                respostas: [
+                    "Computer Style System",
+                    "Cascading Style Sheets",
+                    "Creative Software System"
+                ],
+                correta: 1
+            },
+            {
+                pergunta: "Qual tag HTML cria um botão?",
+                respostas: ["<p>", "<h1>", "<button>"],
+                correta: 2
+            }
+        ];
+
+        // Elementos do HTML
+        const startScreen = document.getElementById("start-screen");
+        const startBtn = document.getElementById("start-btn");
+        const quiz = document.getElementById("quiz");
+        const questionNumber = document.getElementById("question-number");
+        const scoreElement = document.getElementById("score");
+        const progress = document.getElementById("progress");
+        const questionElement = document.getElementById("question");
+        const answersElement = document.getElementById("answers");
+        const nextBtn = document.getElementById("next-btn");
+        const result = document.getElementById("result");
+        const finalScore = document.getElementById("final-score");
+        const message = document.getElementById("message");
+        const restartBtn = document.getElementById("restart-btn");
+
+        // Variáveis do jogo
+        let perguntaAtual = 0;
+        let pontos = 0;
+        let respondeu = false;
+
+        // Iniciar ou reiniciar o quiz
+        function iniciarQuiz() {
+            perguntaAtual = 0;
+            pontos = 0;
+
+            startScreen.classList.add("hidden");
+            result.classList.add("hidden");
+            quiz.classList.remove("hidden");
+
+            mostrarPergunta();
+        }
+
+        // Mostrar a pergunta atual
+        function mostrarPergunta() {
+            respondeu = false;
+
+            const pergunta = perguntas[perguntaAtual];
+
+            questionNumber.textContent =
+                `Pergunta ${perguntaAtual + 1} de ${perguntas.length}`;
+
+            scoreElement.textContent = `Pontos: ${pontos}`;
+            questionElement.textContent = pergunta.pergunta;
+
+            // Atualizar a barrinha de progresso
+            progress.style.width =
+                `${((perguntaAtual + 1) / perguntas.length) * 100}%`;
+
+            answersElement.innerHTML = "";
+            nextBtn.disabled = true;
+
+            pergunta.respostas.forEach((resposta, indice) => {
+                const botao = document.createElement("button");
+
+                botao.textContent = resposta;
+                botao.classList.add("answer-btn");
+
+                botao.addEventListener("click", function() {
+                    verificarResposta(indice);
+                });
+
+                answersElement.appendChild(botao);
+            });
+        }
+
+        // Verificar se a resposta está correta
+        function verificarResposta(indice) {
+            if (respondeu) return;
+
+            respondeu = true;
+
+            const correta = perguntas[perguntaAtual].correta;
+            const botoes = answersElement.querySelectorAll("button");
+
+            if (indice === correta) {
+                pontos += 10;
+                scoreElement.textContent = `Pontos: ${pontos}`;
+            }
+
+            botoes.forEach((botao, i) => {
+                botao.disabled = true;
+
+                if (i === correta) {
+                    botao.classList.add("correct");
+                } else if (i === indice) {
+                    botao.classList.add("wrong");
+                }
+            });
+
+            nextBtn.disabled = false;
+        }
+
+        // Ir para a próxima pergunta
+        nextBtn.addEventListener("click", function() {
+            perguntaAtual++;
+
+            if (perguntaAtual < perguntas.length) {
+                mostrarPergunta();
+            } else {
+                mostrarResultado();
+            }
+        });
+
+        // Mostrar o resultado final
+        function mostrarResultado() {
+            quiz.classList.add("hidden");
+            result.classList.remove("hidden");
+
+            finalScore.textContent =
+                `Você fez ${pontos} de ${perguntas.length * 10} pontos!`;
+
+            if (pontos >= 40) {
+                message.textContent = "Parabéns! Você mandou muito bem!";
+            } else if (pontos >= 20) {
+                message.textContent = "Muito bom! Continue praticando!";
+            } else {
+                message.textContent = "Continue estudando e tente novamente!";
+            }
+        }
+
+        // Eventos dos botões
+        startBtn.addEventListener("click", iniciarQuiz);
+        restartBtn.addEventListener("click", iniciarQuiz);
+    </script>
+</body>
+</html>

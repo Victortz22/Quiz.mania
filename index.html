@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mania</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="quiz-container">
+
+        <!-- TELA INICIAL -->
+        <div id="start-screen">
+            <h1>Quiz Mania</h1>
+
+            <p class="subtitle">
+                Teste seus conhecimentos e descubra
+                quantas perguntas você consegue acertar!
+            </p>
+
+            <div class="quiz-icon">🧠</div>
+
+            <button id="start-btn">Começar Quiz</button>
+
+            <p class="start-info">Prepare-se para o desafio!</p>
+        </div>
+
+        <!-- TELA DAS PERGUNTAS -->
+        <div id="quiz" class="hidden">
+
+            <div class="quiz-info">
+                <span id="question-number">Pergunta 1 de 5</span>
+                <span id="score">Pontos: 0</span>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+
+            <h2 id="question">Carregando pergunta...</h2>
+
+            <div id="answers"></div>
+
+            <button id="next-btn" disabled>
+                Próxima pergunta
+            </button>
+        </div>
+
+        <!-- TELA DE RESULTADO -->
+        <div id="result" class="hidden">
+            <h2>Quiz finalizado!</h2>
+            <p id="final-score"></p>
+            <p id="message"></p>
+            <button id="restart-btn">Jogar novamente</button>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
